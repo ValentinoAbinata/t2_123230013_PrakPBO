@@ -266,14 +266,34 @@ public class MainView extends javax.swing.JFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
-        dc.insert();
-        dc.isitabel();
+        if (!validasiInput()) {
+            return;
+        }
+        try{
+            dc.insert();
+            JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+            resetForm();
+            dc.isitabel();
+        } catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Gagal Menambahkan Data: " + ex.getMessage());
+        }
+        
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
-        dc.update();
-        dc.isitabel();
+        if (!validasiInput()) {
+            return;
+        }
+        try{
+            dc.update();
+            JOptionPane.showMessageDialog(this, "Data berhasil diubah!");
+            resetForm();
+            dc.isitabel();
+        } catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Gagal Mengubah Data: " + ex.getMessage());
+        }
+
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void tabelDataperpusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDataperpusMouseClicked
@@ -289,25 +309,76 @@ public class MainView extends javax.swing.JFrame {
     }//GEN-LAST:event_tabelDataperpusMouseClicked
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        // TODO add your handling code here:
-        dc.delete();
-        dc.isitabel();
+        // TODO add your handling code here:        
+        try{
+            dc.delete();
+            JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+            resetForm();
+            dc.isitabel();
+        } catch(Exception ex){
+            JOptionPane.showMessageDialog(this, "Gagal Menghapus Data: " + ex.getMessage());
+        }
+
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
         // TODO add your handling code here:
         dc.isitabel();
+        JTxtcari.setText("");
     }//GEN-LAST:event_btnTampilkanActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
         String cari = JTxtcari.getText();
         String kolom = JCombokolom.getSelectedItem().toString();
+        
         if (cari.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Masukkan kata kunci pencarian.");
         } else {
-            dc.search(kolom, cari);
+            try {
+                dc.search(kolom, cari);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat mencari: " + ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnCariActionPerformed
+
+    private void resetForm() {
+        JTxtid.setText("");
+        JTxtjudul.setText("");
+        JTxtgenre.setText("");
+        JTxtpenulis.setText("");
+        JTxtpenerbit.setText("");
+        JTxtlokasi.setText("");
+        JTxtstock.setText("");
+    }
+    
+    private boolean validasiInput() {
+        if (JTxtjudul.getText().isEmpty() ||
+            JTxtgenre.getText().isEmpty() ||
+            JTxtpenulis.getText().isEmpty() ||
+            JTxtpenerbit.getText().isEmpty() ||
+            JTxtlokasi.getText().isEmpty() ||
+            JTxtstock.getText().isEmpty()) {
+
+            JOptionPane.showMessageDialog(this, "Semua field harus diisi.");
+            return false;
+        }
+
+        // Validasi agar stock harus berupa angka
+        try {
+            int stok = Integer.parseInt(JTxtstock.getText());
+            if (stok < 0) {
+                JOptionPane.showMessageDialog(this, "Stock tidak boleh negatif.");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Stock harus berupa angka.");
+            return false;
+        }
+
+        return true;
+    }
+
 
     /**
      * @param args the command line arguments
